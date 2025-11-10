@@ -1,4 +1,3 @@
-/BotOrchestriX.sln
-/.idea
-**/bin/
-**/obj/
+.idea/
+bin/
+obj/
