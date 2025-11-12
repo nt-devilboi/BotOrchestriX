@@ -39,7 +39,7 @@ public class YourClass(ITelegramBotClient botClient) : ContextHandler<BasePayloa
 Add Flow
 ```csharp
 var registerFlow = new ServiceRegistryFlow();
-builder.Services.AddFlow<YourEnum>("Hello", x =>
+builder.Services.AddFlow<YourEnum>("trigger", x =>
     x.AddHandler<YourClass>()
         .AddHandler<YourClass>(), registerFlow);
 
