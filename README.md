@@ -45,5 +45,5 @@ builder.Services.AddFlow<YourEnum>("Hello", x =>
 
 builder.Services.AddSingleton<IServiceRegistryFlow>(registerFlow);
 ```
-YourClass.Count() == YourEnum.Count()
+YourClasses.Count() == YourEnum.Count()
 
