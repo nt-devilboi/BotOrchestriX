@@ -29,7 +29,7 @@ builder.Services.AddTelegramDbContext<ChatTelegramDb>();
 ```
 
 
-Define a handler class that implements `ContextHandler<BasePayload, YourEnum>`
+Define a handler class with you business logic that implements `ContextHandler<BasePayload, YourEnum>`
 ```csharp
 public class YourClass(ITelegramBotClient botClient) : ContextHandler<BasePayload, HelloFlow>
 ```
