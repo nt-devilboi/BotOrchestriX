@@ -27,7 +27,7 @@ builder.Services.AddTelegramBotWithController<MenuHandler>("HOST","TG_TOKEN");
 
 builder.Services.AddTelegramDbContext<ChatTelegramDb>();
 ```
-
+Can use `localhost.run/docs/` for webhoock
 
 Define a handler class with you business logic that implements `ContextHandler<BasePayload, YourEnum>`
 ```csharp
