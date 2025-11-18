@@ -1,6 +1,7 @@
 # BotOrchestriX
 A lightweight framework that simplifies bot development by encapsulating all the infrastructure so you can focus directly on your **business logic**.
 
+Now it's work with **Telegram**
 ## 🚀 Why It Exists
 Instead of spending time wiring up controllers, handlers, and message routing, **BotOrchestriX** lets you jump straight into defining how your bot should behave.  
 It hides infrastructure complexity and gives you a clean entry point for working with logic and flows.
