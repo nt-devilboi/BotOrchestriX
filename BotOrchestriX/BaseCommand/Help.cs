@@ -14,6 +14,6 @@ public class Help(List<InfoCommand> infoCommands, ITelegramBotClient botClient) 
 
     public async Task Execute(Update update, ChatContext context)
     {
-        await botClient.SendTextMessageAsync(update.Message.Chat.Id, string.Join("\n", infoCommands));
+        await botClient.SendMessage(update.Message.Chat.Id, string.Join("\n", infoCommands));
     }
 }

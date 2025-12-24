@@ -31,7 +31,7 @@ public class Tests
 
         var stateMachine = new StateMachine<FakeFlow, Trigger>(FakeFlow.Authorization);
         serviceRegistry.Wraps(stateMachine);
-
+        
         var enums = Enum.GetValues<FakeFlow>();
         var states = stateMachine.GetInfo().States.ToArray();
         states.Length.Should().Be(enums.Length);

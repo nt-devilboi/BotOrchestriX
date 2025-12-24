@@ -19,7 +19,7 @@ public class HiHandler(ITelegramBotClient botClient) : ContextHandler<GreetingPa
 
     protected override async Task Enter(DetailContext<GreetingPayload, HelloFlow> context)
     {
-        await botClient.SendTextMessageAsync(context.ChatId, "Hi, What is your name");
+        await botClient.SendMessage(context.ChatId, "Hi, What is your name");
     }
 }
 

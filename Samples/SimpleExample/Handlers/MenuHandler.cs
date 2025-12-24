@@ -9,6 +9,6 @@ public class MenuHandler(
 {
     public async Task Handle(ChatContext context)
     {
-        await botClient.SendTextMessageAsync(context.ChatId, "You are in menu. Say `Hello`");
+        await botClient.SendMessage(context.ChatId, "You are in menu. Say `Hello`");
     }
 }

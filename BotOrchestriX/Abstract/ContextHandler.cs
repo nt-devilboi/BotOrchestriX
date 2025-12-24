@@ -8,7 +8,7 @@ public abstract class ContextHandler<TPayload, TState> : IContextHandler
 {
     protected abstract Task Handle(Update update,
         DetailContext<TPayload, TState> context);
-
+    
     protected abstract Task Enter(DetailContext<TPayload, TState> context);
 
     async Task IContextHandler.Handle(Update update, ChatContext context, IContextFactory contextFactory)

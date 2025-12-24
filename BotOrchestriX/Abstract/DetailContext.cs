@@ -25,7 +25,7 @@ public class DetailContext<TPayload, TState>
     public IStateMachine<TState> State { get; }
     public long ChatId => _chatContext.ChatId;
 
-    public bool TryGetPayload(out TPayload payload)
+    public bool TryGetPayload(out TPayload payload) //todo: по факту, здесь можно IDisposable сделать просто ради красоты и читаемости (себе на будущие когда захочется позаниматься архитекрутурными приколами)
     {
         if (_payload != null)
         {

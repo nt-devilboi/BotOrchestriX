@@ -7,7 +7,7 @@ public class ChatContext
     public string? Payload { get; set; }
     public long ChatId { get; set; }
 
-
+    public bool IsAuthenticated { get; set; }
     public static ChatContext CreateInAccountContext(long chatId)
     {
         return new ChatContext

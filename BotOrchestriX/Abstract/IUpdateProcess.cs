@@ -23,13 +23,13 @@ internal class UpdateProcess(
 
         if (id == null)
         {
-            await telegramBotClient.SendTextMessageAsync(update.Message.Chat.Id,
+            await telegramBotClient.SendMessage(update.Message.Chat.Id,
                 "Я умею понимать только сообщения");
         }
         else
         {
-            var context = await contextRepository.Get(id.Value) ?? NotAuthorized();
-            await messageHandler.Handle(update, context, contextFactory);
+            var chatContext = await contextRepository.Get(id.Value) ?? NotAuthorized();
+            await messageHandler.Handle(update, chatContext, contextFactory);
         }
     }
 

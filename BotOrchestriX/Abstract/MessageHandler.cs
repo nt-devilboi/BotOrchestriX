@@ -33,14 +33,14 @@ internal class MessageHandler : IContextHandler
     public async Task Handle(Update update, ChatContext context, IContextFactory contextFactory)
     {
         var text = update.Message?.Text;
-        
+
         var oldState = context.State;
         if (_commands.TryGetValue(text ?? "", out var command) && command is { Priority: Priority.SystemCommand })
         {
             await command.Execute(update, context);
         }
 
-        else if (_contexts.TryGetValue(context.State, out var contextHandler) && contextHandler != this)
+        else if (_contexts.TryGetValue(context.State, out var contextHandler) && contextHandler != this) // каким образом мы вообще достаём из стате null?
         {
             await contextHandler.Handle(update, context, contextFactory);
         }
@@ -52,16 +52,17 @@ internal class MessageHandler : IContextHandler
 
         else
         {
-            await _botClient.SendTextMessageAsync(update.Message.Chat.Id, "Я ваще ничего не понял"); // сделать изменить
+            await _botClient.SendMessage(update.Message.Chat.Id, "Я ваще ничего не понял"); // сделать изменить
             return;
         }
 
-        if (string.CompareOrdinal(context.State, oldState) != 0 &&
-            _contexts.TryGetValue(context.State, out var nextHandler))
+        while (string.CompareOrdinal(context.State, oldState) != 0 &&
+               _contexts.TryGetValue(context.State, out var nextHandler))
         {
+            oldState = context.State;
             await nextHandler.Enter(context, contextFactory);
         }
-
+        
         await _contextRepository.Upsert(context);
     }
 

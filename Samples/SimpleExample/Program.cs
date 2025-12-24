@@ -13,8 +13,8 @@ builder.Services.AddEndpointsApiExplorer();
 //Settings
 
 builder.Services.AddBaseTelegramCommands();
-builder.Services.AddTelegramBotWithController<MenuHandler>(
-    Environment.GetEnvironmentVariable("HOST_FOR_TG") ?? "https://160c81149caf11.lhr.life",
+await builder.Services.AddTelegramBot<MenuHandler>(
+    Environment.GetEnvironmentVariable("HOST_FOR_TG") ?? "https://6df19cf584e5fb.lhr.life", "api/update/message",
     Environment.GetEnvironmentVariable("TG_TOKEN") ??
     throw new ArgumentException("NOT HAVE TOKEN FOR BOT TG"));
 
@@ -34,12 +34,18 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 app.MapControllers();
+app.MapTelegram();
 
 app.Run();
 
 
 public class ChatTelegramDb : ChatDb
 {
+    public ChatTelegramDb(DbContextOptions options) : base(options)
+    {
+    }
+
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseInMemoryDatabase("FakeDbContext");
