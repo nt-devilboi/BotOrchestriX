@@ -30,6 +30,7 @@ builder.Services.AddTelegramDbContext<ChatTelegramDb>();
 ```
 Can use `localhost.run/docs/` for webhook
 
+Map Updates
 ```csharp
 app.MapTelegram();
 ```
