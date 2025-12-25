@@ -24,7 +24,7 @@ public class AddFlow
     public void CorrectWork_IF_UseAddHandler()
     {
         var serviceRegistry = collection.BuildServiceProvider().GetService<IServiceRegistryFlow>();
-        collection.AddFlow<FakeFlow>("test",
+        collection.AddFlow("test",
             x => x.AddHandler<FakeHandler>()
                 .AddHandler<FakeHandler2>()
                 .AddHandler<FakeSwitch>(),
@@ -48,6 +48,18 @@ public class AddFlow
         stateMachine.State.Should().Be(nameof(BaseContextState.Menu));
     }
 
+    [Test]
+    public void InvalidOperationException_IF_UseSameTrigger()
+    {
+        var serviceRegistry = collection.BuildServiceProvider().GetService<IServiceRegistryFlow>();
+        collection.AddFlow("test",
+            x => x.AddHandler<FakeHandler>(),
+            serviceRegistry);
+
+        var act = () => { collection.AddFlow("test", x => x.AddHandler<FakeHandler>(), serviceRegistry); };
+
+        act.Should().Throw<InvalidOperationException>();
+    }
 
     public class FakeHandler : ContextHandler<BasePayload>
     {

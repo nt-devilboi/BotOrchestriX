@@ -12,5 +12,7 @@
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::96D66492-0B3F-47AA-A3DE-5536308A69FD::net8.0::BotOrchestrix.Tests.StateEventGeneratorVisitor.Build&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::96D66492-0B3F-47AA-A3DE-5536308A69FD::net8.0::BotOrchestrix.Tests.ContextAddExtension.AddFlow.CorrectWork_IF_UseAddHandler&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::96D66492-0B3F-47AA-A3DE-5536308A69FD::net8.0::BotOrchestrix.Tests.ContextAddExtension.AddFlow.CorrectWork_IF_UseAddHandlerIntoHandler&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::96D66492-0B3F-47AA-A3DE-5536308A69FD::net8.0::BotOrchestrix.Tests.ContextAddExtension.AddFlow.InvalidOperationException_IF_UseSameTrigger&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

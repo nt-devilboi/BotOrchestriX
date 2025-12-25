@@ -21,7 +21,7 @@ builder.Services.AddTelegramDbContext<ChatTelegramDb>();
 
 //addFlow
 var registerFlow = new ServiceRegistryFlow();
-builder.Services.AddFlow<HelloFlow>("Hello", x =>
+builder.Services.AddFlow("Hello", x =>
     x.AddHandler<HiHandler>()
         .AddHandler<HowAreYouHandler>(), registerFlow);
 

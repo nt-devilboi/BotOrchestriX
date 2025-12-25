@@ -4,7 +4,7 @@ namespace BotOrchestriX.Abstract;
 
 public interface IServiceRegistryFlow
 {
-    void AddFlow<TState>(List<StateEvent> stateEvents);
+    void AddFlow(List<StateEvent> stateEvents);
 
     IStateMachine Wraps(StateMachine<string, Trigger> stateMachine);
 }
@@ -13,7 +13,7 @@ public class ServiceRegistryFlow : IServiceRegistryFlow //todo: make a internal 
 {
     private readonly Dictionary<string, List<StateEvent>> Flows = new();
 
-    public void AddFlow<TState>(List<StateEvent> stateEvents)
+    public void AddFlow(List<StateEvent> stateEvents)
     {
         foreach (var stateEvent in stateEvents)
         {

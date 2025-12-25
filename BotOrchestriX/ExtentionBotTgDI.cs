@@ -39,7 +39,7 @@ public static class ExtensionSetup
         serviceCollection.AddScoped<MessageHandler>();
         serviceCollection.AddScoped<IStrategyMenu, TMainMenuHandler>();
         serviceCollection.AddScoped<IContextFactory, ContextFactory>();
-        serviceCollection.AddScoped<ITriggerProvider, TriggerProvider>();
+        serviceCollection.AddScoped<TriggerProvider>();
         serviceCollection.AddSingleton(new RouteSettings(host, uri));
     }
 

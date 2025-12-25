@@ -1,3 +1,4 @@
+using BotOrchestriX.BuilderContext;
 using BotOrchestriX.Entity;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -17,7 +18,7 @@ internal class MessageHandler : IContextHandler
     private readonly Dictionary<string, IContextHandler> _contexts;
     private readonly IStrategyMenu strategyMenu;
 
-    public MessageHandler(IEnumerable<Command> commands, IEnumerable<IHandlerInfo> handlerInfos,
+    public MessageHandler(IEnumerable<Command> commands, IEnumerable<IContextHandlerDescriptor> handlerInfos,
         ITelegramBotClient botClient, IContextRepository contextRepository,
         IStrategyMenu strategyMenu)
     {

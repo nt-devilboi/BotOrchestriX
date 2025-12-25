@@ -14,7 +14,7 @@ public class BuilderContextFlow
         List<StateEvent>? steps = null)
     {
         _collection = collection;
-        this._flowComponents = flowComponents;
+        _flowComponents = flowComponents;
         Steps = steps ?? [];
     }
 

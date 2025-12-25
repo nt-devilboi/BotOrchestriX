@@ -86,8 +86,8 @@ internal sealed class ServiceRegistrationVisitor(IServiceCollection collection) 
     public void Visit(HandlerNode node)
     {
         collection.AddScoped(node.HandlerType);
-        collection.AddScoped<IHandlerInfo>(sp =>
-            new IHandlerInfo((IContextHandler)sp.GetRequiredService(node.HandlerType), node.State));
+        collection.AddScoped<IContextHandlerDescriptor>(sp =>
+            new IContextHandlerDescriptor((IContextHandler)sp.GetRequiredService(node.HandlerType), node.State));
 
         foreach (var sub in node.SubTasks)
             sub.Accept(this);
@@ -96,8 +96,8 @@ internal sealed class ServiceRegistrationVisitor(IServiceCollection collection) 
     public void Visit(SwitchNode node)
     {
         collection.AddScoped(node.HandlerType);
-        collection.AddScoped<IHandlerInfo>(sp =>
-            new IHandlerInfo((IContextHandler)sp.GetRequiredService(node.HandlerType), node.State));
+        collection.AddScoped<IContextHandlerDescriptor>(sp =>
+            new IContextHandlerDescriptor((IContextHandler)sp.GetRequiredService(node.HandlerType), node.State));
 
         foreach (var branch in node.Branches.Values)
         {
