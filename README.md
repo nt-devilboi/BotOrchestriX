@@ -24,7 +24,7 @@ public class MenuHandler(
 Add Configuration
 ```csharp
 builder.Services.AddBaseTelegramCommands();
-builder.Services.AddTelegramBotWithController<MenuHandler>("HOST", "url", "TG_TOKEN");
+builder.Services.AddTelegramBotWithController<MenuHandler>("HOST", "URL", "TG_TOKEN");
 
 builder.Services.AddTelegramDbContext<ChatTelegramDb>();
 ```
