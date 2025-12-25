@@ -30,6 +30,10 @@ builder.Services.AddTelegramDbContext<ChatTelegramDb>();
 ```
 Can use `localhost.run/docs/` for webhook
 
+```csharp
+app.MapTelegram();
+```
+
 Define a handler class with you business logic that implements `ContextHandler<BasePayload>`
 ```csharp
 public class YourClass(ITelegramBotClient botClient) : ContextHandler<BasePayload>
