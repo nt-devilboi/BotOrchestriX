@@ -1,59 +1,70 @@
 using BotOrchestriX.Abstract;
+using BotOrchestriX.Entity;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BotOrchestriX.BuilderContext;
 
-internal interface IFlowNodeVisitor<TState> where TState : struct, Enum
+internal interface IFlowNodeVisitor
 {
-    void Visit(HandlerNode<TState> node);
-    void Visit(SwitchNode<TState> node);
+    void Visit(HandlerNode node);
+    void Visit(SwitchNode node);
 }
 
-internal abstract class FlowNode<TState> where TState : struct, Enum
+internal abstract class FlowNode
 {
-    public required TState State { get; init; }
-    public abstract void Accept(IFlowNodeVisitor<TState> visitor);
+    public required string State { get; init; }
+    public abstract void Accept(IFlowNodeVisitor visitor);
 }
 
-internal sealed class HandlerNode<TState> : FlowNode<TState> where TState : struct, Enum
-{
-    public required Type HandlerType { get; init; }
-    public List<FlowNode<TState>> SubTasks { get; } = new();
-
-    public override void Accept(IFlowNodeVisitor<TState> visitor) => visitor.Visit(this);
-}
-
-internal sealed class SwitchNode<TState> : FlowNode<TState> where TState : struct, Enum
+internal sealed class HandlerNode : FlowNode
 {
     public required Type HandlerType { get; init; }
-    public Dictionary<string, FlowNode<TState>> Branches { get; } = new();
 
-    public override void Accept(IFlowNodeVisitor<TState> visitor) => visitor.Visit(this);
+    public List<FlowNode> SubTasks { get; } =
+        new(); // чувак давай потом сделаем просто Next, есть свич какие здесь та subTask?
+
+    public override void Accept(IFlowNodeVisitor visitor) => visitor.Visit(this);
 }
 
-internal sealed class StateEventGeneratorVisitor<TState> : IFlowNodeVisitor<TState> where TState : struct, Enum
+internal sealed class SwitchNode : FlowNode
+{
+    public required Type HandlerType { get; init; }
+    public Dictionary<string, FlowNode> Branches { get; } = new();
+
+    public override void Accept(IFlowNodeVisitor visitor) => visitor.Visit(this);
+}
+
+internal sealed class StateEventGeneratorVisitor : IFlowNodeVisitor
 {
     private readonly List<StateEvent> _events = new();
-    private (TState? state, bool inSwitch) PreviousNode;
+    private (string state, bool inSwitch) PreviousNode;
+
+    public void ConnectWithMenu()
+    {
+        if (PreviousNode.state == BaseContextState.Menu.ToString()) return;
+
+        _events.Add(new StateEvent(Trigger.UserWantToContinue, PreviousNode.state, BaseContextState.Menu.ToString()));
+        PreviousNode = (BaseContextState.Menu.ToString(), false);
+    }
 
     public IReadOnlyList<StateEvent> Events => _events;
 
-    public void Visit(HandlerNode<TState> node)
+    public void Visit(HandlerNode node)
     {
         if (PreviousNode is { state: not null, inSwitch: false })
         {
-            _events.Add(new StateEvent(Trigger.UserWantToContinue, PreviousNode.state.Value,
+            _events.Add(new StateEvent(Trigger.UserWantToContinue, PreviousNode.state,
                 node.State));
         }
 
         PreviousNode = (node.State, PreviousNode.inSwitch);
     }
 
-    public void Visit(SwitchNode<TState> node)
+    public void Visit(SwitchNode node)
     {
-        if (PreviousNode.state.HasValue)
+        if (!string.IsNullOrEmpty(PreviousNode.state))
         {
-            _events.Add(new StateEvent(Trigger.UserWantToContinue, PreviousNode.state.Value,
+            _events.Add(new StateEvent(Trigger.UserWantToContinue, PreviousNode.state,
                 node.State));
         }
 
@@ -70,24 +81,23 @@ internal sealed class StateEventGeneratorVisitor<TState> : IFlowNodeVisitor<TSta
     }
 }
 
-internal sealed class ServiceRegistrationVisitor<TState>(IServiceCollection collection) : IFlowNodeVisitor<TState>
-    where TState : struct, Enum
+internal sealed class ServiceRegistrationVisitor(IServiceCollection collection) : IFlowNodeVisitor
 {
-    public void Visit(HandlerNode<TState> node)
+    public void Visit(HandlerNode node)
     {
         collection.AddScoped(node.HandlerType);
         collection.AddScoped<IHandlerInfo>(sp =>
-            new IHandlerInfo((IContextHandler)sp.GetRequiredService(node.HandlerType), node.State.ToString()));
+            new IHandlerInfo((IContextHandler)sp.GetRequiredService(node.HandlerType), node.State));
 
         foreach (var sub in node.SubTasks)
             sub.Accept(this);
     }
 
-    public void Visit(SwitchNode<TState> node)
+    public void Visit(SwitchNode node)
     {
         collection.AddScoped(node.HandlerType);
         collection.AddScoped<IHandlerInfo>(sp =>
-            new IHandlerInfo((IContextHandler)sp.GetRequiredService(node.HandlerType), node.State.ToString()));
+            new IHandlerInfo((IContextHandler)sp.GetRequiredService(node.HandlerType), node.State));
 
         foreach (var branch in node.Branches.Values)
         {

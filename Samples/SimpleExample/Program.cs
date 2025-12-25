@@ -6,7 +6,6 @@ using SimpleExample.Handlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddHttpClient();
 builder.Services.AddEndpointsApiExplorer();
 
@@ -14,7 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddBaseTelegramCommands();
 await builder.Services.AddTelegramBot<MenuHandler>(
-    Environment.GetEnvironmentVariable("HOST_FOR_TG") ?? "https://6df19cf584e5fb.lhr.life", "api/update/message",
+    Environment.GetEnvironmentVariable("HOST_FOR_TG") ?? "https://6fbfc3c0cb095f.lhr.life", "api/update/message",
     Environment.GetEnvironmentVariable("TG_TOKEN") ??
     throw new ArgumentException("NOT HAVE TOKEN FOR BOT TG"));
 

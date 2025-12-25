@@ -4,8 +4,7 @@ using Stateless;
 
 namespace BotOrchestriX.Abstract;
 
-public class DetailContext<TPayload, TState>
-    where TState : struct, Enum
+public class DetailContext<TPayload>
     where TPayload : BasePayload
 {
     private TPayload? _payload;
@@ -14,7 +13,7 @@ public class DetailContext<TPayload, TState>
 
     internal DetailContext(ChatContext chatContext, IServiceRegistryFlow registryFlow)
     {
-        var stateMachine = new StateMachine<TState, Trigger>(() => Enum.Parse<TState>(chatContext.State),
+        var stateMachine = new StateMachine<string, Trigger>(() => chatContext.State,
             x => chatContext.State = x.ToString());
 
         State = registryFlow.Wraps(stateMachine);
@@ -22,10 +21,12 @@ public class DetailContext<TPayload, TState>
         _payload = JsonConvert.DeserializeObject<TPayload>(_chatContext.Payload ?? string.Empty);
     }
 
-    public IStateMachine<TState> State { get; }
+    public IStateMachine State { get; }
     public long ChatId => _chatContext.ChatId;
 
-    public bool TryGetPayload(out TPayload payload) //todo: по факту, здесь можно IDisposable сделать просто ради красоты и читаемости (себе на будущие когда захочется позаниматься архитекрутурными приколами)
+    public bool
+        TryGetPayload(
+            out TPayload payload) //todo: по факту, здесь можно IDisposable сделать просто ради красоты и читаемости (себе на будущие когда захочется позаниматься архитекрутурными приколами)
     {
         if (_payload != null)
         {
@@ -38,14 +39,14 @@ public class DetailContext<TPayload, TState>
     }
 
 
-    public DetailContext<TPayload, TState> Reset()
+    public DetailContext<TPayload> Reset()
     {
         _chatContext.ToMenu();
         _chatContext.Payload = null;
         return this;
     }
 
-    public DetailContext<TPayload, TState> UpdatePayload(TPayload payload)
+    public DetailContext<TPayload> UpdatePayload(TPayload payload)
     {
         _payload = payload;
         _chatContext.Payload = JsonConvert.SerializeObject(_payload);

@@ -3,59 +3,52 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BotOrchestriX.BuilderContext;
 
-public class BuilderContextFlow<TState> where TState : struct, Enum
+public class BuilderContextFlow
 {
     private readonly IServiceCollection _collection;
-    private readonly FlowComponents<TState> freeFlowComponent;
+    private readonly FlowComponents _flowComponents;
     internal readonly List<StateEvent> Steps = [];
-    private readonly List<FlowNode<TState>> _nodes = new();
+    private readonly List<FlowNode> _nodes = new();
 
-    internal BuilderContextFlow(FlowComponents<TState> freeFlowComponent, IServiceCollection collection,
+    internal BuilderContextFlow(FlowComponents flowComponents, IServiceCollection collection,
         List<StateEvent>? steps = null)
     {
         _collection = collection;
-        this.freeFlowComponent = freeFlowComponent;
+        this._flowComponents = flowComponents;
         Steps = steps ?? [];
     }
 
 
-    public BuilderContextFlow<TState> AddHandler<TContextHandler>()
+    public BuilderContextFlow AddHandler<TContextHandler>()
         where TContextHandler : class, IContextHandler
     {
-        if (freeFlowComponent.Empty) throw new ArgumentException("capacity for handler is exhausted");
-        var start = freeFlowComponent.FreeState;
-        freeFlowComponent.Next();
-
-        var node = new HandlerNode<TState>
+        var node = new HandlerNode
         {
-            State = start,
+            State = typeof(TContextHandler).FullName,
             HandlerType = typeof(TContextHandler)
         };
 
+        _flowComponents.Add(node.State);
         _nodes.Add(node);
-        freeFlowComponent.PrevHandler = start;
         return this;
     }
 
 
-    public BuilderContextFlow<TState> AddSwitch<TContextHandler>(
-        params (Action<BuilderContextFlow<TState>> action, string name)[] events)
+    public BuilderContextFlow AddSwitch<TContextHandler>(
+        params (Action<BuilderContextFlow> action, string name)[] events)
         where TContextHandler : class, IContextHandler
     {
-        if (freeFlowComponent.Empty) throw new ArgumentException("capacity for handler is exhausted");
-        var start = freeFlowComponent.FreeState;
-        freeFlowComponent.Next();
-
-        var switchNode = new SwitchNode<TState>
+        var switchNode = new SwitchNode
         {
             HandlerType = typeof(TContextHandler),
-            State = start
+            State = typeof(TContextHandler).FullName
         };
 
+        _flowComponents.Add(switchNode.State);
         _nodes.Add(switchNode);
         foreach (var action1 in events)
         {
-            var subTaskBuilder = new BuilderContextFlow<TState>(freeFlowComponent, _collection, Steps);
+            var subTaskBuilder = new BuilderContextFlow(_flowComponents, _collection, Steps);
             action1.action(subTaskBuilder);
 
             switchNode.Branches.Add(action1.name, subTaskBuilder._nodes[0]);
@@ -66,14 +59,15 @@ public class BuilderContextFlow<TState> where TState : struct, Enum
 
     internal void Build()
     {
-        var serviceVisitor = new ServiceRegistrationVisitor<TState>(_collection);
+        var serviceVisitor = new ServiceRegistrationVisitor(_collection);
         foreach (var node in _nodes)
             node.Accept(serviceVisitor);
 
-        var eventVisitor = new StateEventGeneratorVisitor<TState>();
+        var eventVisitor = new StateEventGeneratorVisitor();
         foreach (var node in _nodes)
             node.Accept(eventVisitor);
 
+        eventVisitor.ConnectWithMenu();
         Steps.Clear();
         Steps.AddRange(eventVisitor.Events);
     }

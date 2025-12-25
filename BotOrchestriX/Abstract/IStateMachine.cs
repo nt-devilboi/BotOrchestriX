@@ -2,15 +2,15 @@ using Stateless;
 
 namespace BotOrchestriX.Abstract;
 
-public interface IStateMachine<in TState>
+public interface IStateMachine
 {
     void Continue();
-    void GoTo(TState state);
+    void GoTo(string state);
 }
 
-internal class StateMachine<TState>(StateMachine<TState, Trigger> stateMachine) : IStateMachine<TState> where TState : Enum 
+internal class StateMachine(StateMachine<string, Trigger> stateMachine) : IStateMachine
 {
-    private readonly StateMachine<TState, Trigger>.TriggerWithParameters<string> goToSubTask =
+    private readonly StateMachine<string, Trigger>.TriggerWithParameters<string> goToSubTask =
         new(Trigger.UserGoToSubTask);
 
     public void Continue()
@@ -18,11 +18,12 @@ internal class StateMachine<TState>(StateMachine<TState, Trigger> stateMachine) 
         stateMachine.Fire(Trigger.UserWantToContinue);
     }
 
-    public void GoTo(TState state)
+
+    public void GoTo(string state)
     {
-        stateMachine.Fire(goToSubTask, state.ToString());
+        stateMachine.Fire(goToSubTask, state);
     }
 
-    public static implicit operator StateMachine<TState>(StateMachine<TState, Trigger> stateMachine) =>
+    public static implicit operator StateMachine(StateMachine<string, Trigger> stateMachine) =>
         new(stateMachine);
 }

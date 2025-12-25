@@ -29,7 +29,7 @@ public static class ExtensionSetup
 
         //todo: реализовать проверку webHook
         var webhookInfo = await client.GetWebhookInfo();
-        
+
 
         Console.WriteLine($"webhook address {host}/{uri}");
 
@@ -104,7 +104,7 @@ public static class ExtensionSetup
         return assembly
             .GetTypes()
             .Where(t => t is { BaseType: not null, IsAbstract: false } &&
-                        t.BaseType == typeof(Command) && t != typeof(Router<>))
+                        t.BaseType == typeof(Command) && t != typeof(Router))
             .ToArray();
     }
 }

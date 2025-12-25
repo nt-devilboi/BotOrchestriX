@@ -4,9 +4,9 @@ using Telegram.Bot.Types;
 
 namespace SimpleExample.Handlers;
 
-public class HiHandler(ITelegramBotClient botClient) : ContextHandler<GreetingPayload, HelloFlow>
+public class HiHandler(ITelegramBotClient botClient) : ContextHandler<GreetingPayload>
 {
-    protected override Task Handle(Update update, DetailContext<GreetingPayload, HelloFlow> context)
+    protected override Task Handle(Update update, DetailContext<GreetingPayload> context)
     {
         var name = update.Message!.Text;
 
@@ -17,7 +17,7 @@ public class HiHandler(ITelegramBotClient botClient) : ContextHandler<GreetingPa
         return Task.CompletedTask;
     }
 
-    protected override async Task Enter(DetailContext<GreetingPayload, HelloFlow> context)
+    protected override async Task Enter(DetailContext<GreetingPayload> context)
     {
         await botClient.SendMessage(context.ChatId, "Hi, What is your name");
     }

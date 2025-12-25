@@ -6,39 +6,41 @@ public interface IServiceRegistryFlow
 {
     void AddFlow<TState>(List<StateEvent> stateEvents);
 
-    IStateMachine<TState> Wraps<TState>(StateMachine<TState, Trigger> stateMachine) where TState : struct, Enum;
+    IStateMachine Wraps(StateMachine<string, Trigger> stateMachine);
 }
 
 public class ServiceRegistryFlow : IServiceRegistryFlow //todo: make a internal class
 {
-    private readonly Dictionary<Type, List<StateEvent>> Flows = new();
+    private readonly Dictionary<string, List<StateEvent>> Flows = new();
 
     public void AddFlow<TState>(List<StateEvent> stateEvents)
     {
-        Flows.Add(typeof(TState), stateEvents);
+        foreach (var stateEvent in stateEvents)
+        {
+            Flows.Add(stateEvent.Source, stateEvents);
+        }
     }
 
-    public IStateMachine<TState> Wraps<TState>(StateMachine<TState, Trigger> stateMachine)
-        where TState : struct, Enum
-
+    public IStateMachine Wraps(StateMachine<string, Trigger> stateMachine)
     {
         var approveTrigger = stateMachine.SetTriggerParameters<string>(Trigger.UserGoToSubTask);
-        foreach (var stateEvent in Flows[typeof(TState)])
+        foreach (var stateEvent in Flows[stateMachine.State])
         {
-            var stateConfiguration = stateMachine.Configure((TState)stateEvent.Source);
-            
+            var stateConfiguration = stateMachine.Configure(stateEvent.Source);
+
             if (stateEvent.Trigger == Trigger.UserGoToSubTask)
             {
-                stateConfiguration.PermitIf(approveTrigger, (TState)stateEvent.Dest, x => stateEvent.NameHandler == x);
+                stateConfiguration.PermitIf(approveTrigger, stateEvent.Dest,
+                    x => stateEvent.CanGo == x); // какая-то бесполезная логика.
                 continue;
             }
 
-            stateConfiguration.Permit(stateEvent.Trigger, (TState)stateEvent.Dest);
+            stateConfiguration.Permit(stateEvent.Trigger, stateEvent.Dest);
         }
 
 
-        return new StateMachine<TState>(stateMachine);
+        return new StateMachine(stateMachine);
     }
 }
 
-public record StateEvent(Trigger Trigger, Enum Source, Enum Dest, string? NameHandler = null);
+public record StateEvent(Trigger Trigger, string Source, string Dest, string? CanGo = null);

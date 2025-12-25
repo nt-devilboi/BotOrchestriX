@@ -5,6 +5,5 @@ namespace BotOrchestriX;
 
 internal interface IContextFactory
 {
-    public DetailContext<TPayload, TState> Create<TPayload, TState>(ChatContext context)
-        where TState : struct, Enum where TPayload : BasePayload;
+    public DetailContext<TPayload> Create<TPayload>(ChatContext context) where TPayload : BasePayload;
 }

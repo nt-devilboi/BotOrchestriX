@@ -5,9 +5,10 @@ namespace BotOrchestriX;
 
 internal class ContextFactory(IServiceRegistryFlow flows) : IContextFactory
 {
-    public DetailContext<TPayload, TState> Create<TPayload, TState>(ChatContext context)
-        where TPayload : BasePayload where TState : struct, Enum
+    public DetailContext<TPayload> Create<TPayload>(ChatContext context)
+        where TPayload : BasePayload
+
     {
-        return new DetailContext<TPayload, TState>(context, flows);
+        return new DetailContext<TPayload>(context, flows);
     }
 }

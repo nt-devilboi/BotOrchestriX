@@ -7,12 +7,12 @@ namespace BotOrchestriX;
 public static class ContextAddExtension
 {
     public static void AddFlow<TEnum>(this IServiceCollection serviceCollection, string trigger,
-        Action<BuilderContextFlow<TEnum>> builderFunc, IServiceRegistryFlow registryFlow) where TEnum : struct, Enum
+        Action<BuilderContextFlow> builderFunc, IServiceRegistryFlow registryFlow) where TEnum : struct, Enum
     {
-        var enums = Enum.GetValues<TEnum>();
-        var builder = new BuilderContextFlow<TEnum>(new FlowComponents<TEnum>(enums), serviceCollection);
+        var flowComponents = new FlowComponents();
+        var builder = new BuilderContextFlow(flowComponents, serviceCollection);
 
-        serviceCollection.AddScoped<Command>(_ => new Router<TEnum>(trigger));
+        serviceCollection.AddScoped<Command>(_ => new Router(trigger, flowComponents));
         var stateType = typeof(TEnum);
         if (serviceCollection.HasDuplicate(trigger))
             throw new InvalidOperationException(
@@ -40,18 +40,16 @@ public static class ContextAddExtension
     }
 }
 
-public class FlowComponents<TState>(TState[] state) //todo 
+public class FlowComponents //todo: на сколько этот класс вообще актуальный?
 {
-    private int _pointer;
-    public TState FreeState => state[_pointer];
-    public TState PrevState => state[_pointer - 1];
-    private readonly TState _start = state[0];
+    private readonly List<string> States = [];
+    public string Start => States[0];
+    public string PrevHandler => States[^1];
 
-    public bool IsStart => _pointer == 0;
-    public TState PrevHandler { get; set; } = state[0];
-    public bool Empty => _pointer >= state.Length;
-
-    public void Next() => _pointer++;
+    public void Add(string state)
+    {
+        States.Add(state);
+    }
 }
 
 internal record IHandlerInfo(IContextHandler ContextHandler, string number);
