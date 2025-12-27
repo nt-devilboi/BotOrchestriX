@@ -24,15 +24,20 @@ public class MenuHandler(
 Add Configuration
 ```csharp
 builder.Services.AddBaseTelegramCommands();
-builder.Services.AddTelegramBotWithController<MenuHandler>("HOST","TG_TOKEN");
+builder.Services.AddTelegramBotWithController<MenuHandler>("HOST", "URL", "TG_TOKEN");
 
 builder.Services.AddTelegramDbContext<ChatTelegramDb>();
 ```
 Can use `localhost.run/docs/` for webhook
 
-Define a handler class with you business logic that implements `ContextHandler<BasePayload, YourEnum>`
+Map Updates
 ```csharp
-public class YourClass(ITelegramBotClient botClient) : ContextHandler<BasePayload, HelloFlow>
+app.MapTelegram();
+```
+
+Define a handler class with you business logic that implements `ContextHandler<BasePayload>`
+```csharp
+public class YourClass(ITelegramBotClient botClient) : ContextHandler<BasePayload>
 ```
 
 
@@ -40,11 +45,10 @@ public class YourClass(ITelegramBotClient botClient) : ContextHandler<BasePayloa
 Add Flow
 ```csharp
 var registerFlow = new ServiceRegistryFlow();
-builder.Services.AddFlow<YourEnum>("trigger", x =>
+builder.Services.AddFlow("trigger", x =>
     x.AddHandler<YourClass>()
         .AddHandler<YourClass>(), registerFlow);
 
 builder.Services.AddSingleton<IServiceRegistryFlow>(registerFlow);
 ```
-YourClasses.Count() == YourEnum.Count()
 
