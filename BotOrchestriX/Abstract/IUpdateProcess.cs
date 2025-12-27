@@ -30,6 +30,7 @@ internal class UpdateProcess(
         {
             var chatContext = await contextRepository.Get(id.Value) ?? NotAuthorized();
             await messageHandler.Handle(update, chatContext, contextFactory);
+            await contextRepository.Upsert(chatContext);
         }
     }
 

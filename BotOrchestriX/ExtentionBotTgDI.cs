@@ -41,6 +41,7 @@ public static class ExtensionSetup
         serviceCollection.AddScoped<IContextFactory, ContextFactory>();
         serviceCollection.AddScoped<TriggerProvider>();
         serviceCollection.AddSingleton(new RouteSettings(host, uri));
+        serviceCollection.AddSingleton<GlobalRouter>();
     }
 
 

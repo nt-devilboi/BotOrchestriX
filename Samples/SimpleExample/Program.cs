@@ -13,8 +13,8 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddBaseTelegramCommands();
 await builder.Services.AddTelegramBot<MenuHandler>(
-    Environment.GetEnvironmentVariable("HOST_FOR_TG") ?? "https://6fbfc3c0cb095f.lhr.life", "api/update/message",
-    Environment.GetEnvironmentVariable("TG_TOKEN") ??
+    Environment.GetEnvironmentVariable("HOST_FOR_TG") ?? "https://efd7f4bbf379ce.lhr.life", "api/update/message",
+    Environment.GetEnvironmentVariable("TG_TOKEN", EnvironmentVariableTarget.User) ??
     throw new ArgumentException("NOT HAVE TOKEN FOR BOT TG"));
 
 builder.Services.AddTelegramDbContext<ChatTelegramDb>();

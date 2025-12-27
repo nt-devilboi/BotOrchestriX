@@ -14,8 +14,7 @@ internal sealed class TriggerProvider
     {
         _map = descriptors.ToArray();
     }
-
-
+    
     public ReadOnlySpan<RouterTriggerDescriptor> GetAll()
     {
         return _map;
